@@ -24,7 +24,15 @@ export class AuthService {
   async login(user: any) {
     const payload = { username: user.username, sub: user._id };
     return {
+      message: 'success',
       access_token: this.jwtService.sign(payload),
+    };
+  }
+  async checkAccount(username: string): Promise<object> {
+    const user = await this.usersService.getUser({ username });
+    return {
+      status: user ? 'User exists' : 'User does not exist',
+      userExists: user ? true : false,
     };
   }
 }
