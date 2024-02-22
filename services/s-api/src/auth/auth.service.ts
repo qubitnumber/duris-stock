@@ -23,9 +23,13 @@ export class AuthService {
   }
   async login(user: any) {
     const payload = { username: user.username, sub: user._id };
+    const access_token = this.jwtService.sign(payload);
+    const filter = { username: user.username };
+    const update = { token: access_token };
+    await this.usersService.updateUser(filter, update);
     return {
       message: 'success',
-      access_token: this.jwtService.sign(payload),
+      access_token,
     };
   }
   async checkAccount(username: string): Promise<object> {

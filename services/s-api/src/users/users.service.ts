@@ -17,4 +17,8 @@ export class UsersService {
   async getUser(query: object): Promise<User> {
     return this.userModel.findOne(query);
   }
+
+  async updateUser(filter: object, update: object): Promise<User> {
+    return this.userModel.findOneAndUpdate(filter, update);
+  }
 }
