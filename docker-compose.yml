@@ -4,14 +4,16 @@ services:
     build:
       context: ./services/f-api
       dockerfile: Dockerfile
-    container_name: f-api
+    container_name: f-service
     ports:
       - "8000:8000"
+    depends_on:
+      - s-service
   s-service:
     build:
       context: ./services/s-api
       dockerfile: Dockerfile
-    container_name: s-api
+    container_name: s-service
     ports:
       - "8001:8001"
     volumes:
@@ -23,3 +25,6 @@ services:
     container_name: ui
     ports:
       - "8080:8080" 
+    depends_on:
+      - s-service
+      - f-service
