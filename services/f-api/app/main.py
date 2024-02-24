@@ -19,7 +19,7 @@ app.add_middleware(
 token_auth_scheme = HTTPBearer(auto_error=False)
 api_key = os.getenv('F_X_API_KEY')
 
-@app.get("/")
+@app.get("/protected")
 def private(request: Request, bearer_token: str = Depends(token_auth_scheme)):
     if not bearer_token or bearer_token.credentials != api_key:
         raise HTTPException(

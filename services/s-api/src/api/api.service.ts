@@ -8,7 +8,7 @@ export class ApiService {
 
   async getProtectFServer() {
     return this.http
-      .get('/')
+      .get('/protected')
       .pipe(
         map((res) => {
           return res.data;
