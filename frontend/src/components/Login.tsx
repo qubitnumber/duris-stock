@@ -1,5 +1,6 @@
 import { useState, Dispatch, SetStateAction } from 'react'
 import { useNavigate } from 'react-router-dom'
+import services from '../services'
 
 interface LoginProps {
   setEmail: Dispatch<SetStateAction<string>>;
@@ -13,6 +14,7 @@ const Login = (props: LoginProps) => {
   const [passwordError, setPasswordError] = useState<string>('')
 
   const navigate = useNavigate()
+  const authService = services.authService
 
   const onButtonClick = () => {
     // Set initial error values to empty
@@ -57,28 +59,16 @@ const Login = (props: LoginProps) => {
   type CallbackType = (response: boolean, error?: string | null) => void
 
   const checkAccountExists = (callback: CallbackType) => {
-    fetch(`${import.meta.env.VITE_SERVER_S_API_BASE_URL}/auth/check-account`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ username: email }),
-    })
-      .then((r) => r.json())
+    authService.authCheckAccount({ username: email })
+      .then((r) => r.data)
       .then((r) => {
         callback(r?.userExists)
       })
   }
 
   const logIn = () => {
-    fetch(`${import.meta.env.VITE_SERVER_S_API_BASE_URL}/auth/login`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ username: email, password }),
-    })
-      .then((r) => r.json())
+    authService.authLogin({ username: email, password })
+      .then((r) => r.data)
       .then((r) => {
         if ('success' === r.message) {
           localStorage.setItem('user', JSON.stringify({ email, token: r.access_token }))

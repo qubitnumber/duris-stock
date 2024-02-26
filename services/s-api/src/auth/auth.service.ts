@@ -7,8 +7,9 @@ import { JwtService } from '@nestjs/jwt';
 export class AuthService {
   constructor(
     private readonly usersService: UsersService,
-    private jwtService: JwtService,
+    private readonly jwtService: JwtService,
   ) {}
+
   async validateUser(username: string, password: string): Promise<any> {
     const user = await this.usersService.getUser({ username });
     if (!user) return null;
@@ -21,9 +22,12 @@ export class AuthService {
     }
     return null;
   }
+
   async login(user: any) {
     const payload = { username: user.username, sub: user._id };
-    const access_token = this.jwtService.sign(payload);
+    const access_token = await this.jwtService.signAsync(payload, {
+      secret: process.env.JWT_SECRET_KEY,
+    });
     const filter = { username: user.username };
     const update = { token: access_token };
     await this.usersService.updateUser(filter, update);
@@ -32,11 +36,18 @@ export class AuthService {
       access_token,
     };
   }
+
   async checkAccount(username: string): Promise<object> {
     const user = await this.usersService.getUser({ username });
     return {
       status: user ? 'User exists' : 'User does not exist',
       userExists: user ? true : false,
     };
+  }
+
+  async validateToken(token: string): Promise<object> {
+    return this.jwtService.verify(token, {
+      secret: process.env.JWT_SECRET_KEY,
+    });
   }
 }

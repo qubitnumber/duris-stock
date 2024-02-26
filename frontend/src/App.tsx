@@ -2,11 +2,13 @@ import { useEffect, useState } from 'react'
 import { BrowserRouter, Route, Routes } from 'react-router-dom'
 import Home from './components/Home'
 import Login from './components/Login'
+import services from './services'
 import './App.css'
 
 function App() {
   const [loggedIn, setLoggedIn] = useState<boolean>(false)
   const [email, setEmail] = useState<string>('')
+  const authService = services.authService
 
   useEffect(() => {
     // Fetch the user email and token from local storage
@@ -17,19 +19,15 @@ function App() {
       setLoggedIn(false)
       return
     }
-  
+
     // If the token exists, verify it with the auth server to see if it is valid
-    fetch(`${import.meta.env.SERVER_S_API_BASE_URL}/verify`, {
-      method: 'POST',
-      headers: {
-        'jwt-token': user.token,
-      },
-    })
-      .then((r) => r.json())
+    authService.authVerify()
+      .then((r) => r.data)
       .then((r) => {
         setLoggedIn('success' === r.message)
         setEmail(user.email || '')
       })
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   return (
