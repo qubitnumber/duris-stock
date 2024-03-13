@@ -9,14 +9,14 @@ export default {
 
     //get all users
     getAllUsers(){       
-        return HttpClient.get(users)
+        return HttpClient.requestWithToken.get(users)
     },
     //get user by Id
     getUserById(id: number){
-        return HttpClient.get(`${users}/${id}`)
+        return HttpClient.requestWithToken.get(`${users}/${id}`)
     },
     // create a user
     create(payload: object){
-        return HttpClient.post(users, payload)
+        return HttpClient.requestWithToken.post(users, payload)
     }
 }

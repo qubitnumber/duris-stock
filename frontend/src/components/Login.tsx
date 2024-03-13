@@ -1,5 +1,6 @@
 import { useState, Dispatch, SetStateAction } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { LockClosedIcon } from "@heroicons/react/20/solid";
 import services from '../services'
 
 interface LoginProps {
@@ -12,9 +13,8 @@ const Login = (props: LoginProps) => {
   const [password, setPassword] = useState<string>('')
   const [emailError, setEmailError] = useState<string>('')
   const [passwordError, setPasswordError] = useState<string>('')
-
   const navigate = useNavigate()
-  const authService = services.authService
+  const authService = services.auth
 
   const onButtonClick = () => {
     // Set initial error values to empty
@@ -42,43 +42,28 @@ const Login = (props: LoginProps) => {
       return
     }
 
-    checkAccountExists((accountExists: boolean) => {
-      // If yes, log in
-      if (accountExists) logIn()
-      // Else, ask user if they want to create a new account and if yes, then log in
-      else if (
-        window.confirm(
-          'An account does not exist with this email address: ' + email + '. Do you want to create a new account?',
-        )
-      ) {
-        logIn()
-      }
-    })
+    logIn()
   }
 
-  type CallbackType = (response: boolean, error?: string | null) => void
+  const LoginIcon = () => (
+    <button
+      onClick={onButtonClick}
+      className={`rounded-lg border-1 border-neutral-400 p-2 shadow-lg transition duration-300 hover:scale-125`}
+    >
+      <LockClosedIcon className={`h-5 w-5 cursor-pointer stroke-1`}/>
+    </button>
+  )
 
-  const checkAccountExists = (callback: CallbackType) => {
-    authService.authCheckAccount({ username: email })
-      .then((r) => r.data)
-      .then((r) => {
-        callback(r?.userExists)
-      })
-  }
-
-  const logIn = () => {
-    authService.authLogin({ username: email, password })
-      .then((r) => r.data)
-      .then((r) => {
-        if ('success' === r.message) {
-          localStorage.setItem('user', JSON.stringify({ email, token: r.access_token }))
-          props.setLoggedIn(true)
-          props.setEmail(email)
-          navigate('/')
-        } else {
-          window.alert('Wrong email or password')
-        }
-      })
+  const logIn = async () => {
+    const { data } = await authService.authLogin({ username: email, password })
+    if (data) {
+      const { accessToken, refreshToken} = data
+      localStorage.setItem('user', JSON.stringify({ email, token: accessToken, refreshToken }))
+      props.setLoggedIn(true)
+      props.setEmail(email)
+      navigate('/')
+    }
+    setEmailError('Please enter correct email and password')
   }
 
   return (
@@ -89,6 +74,8 @@ const Login = (props: LoginProps) => {
       <br />
       <div className={'inputContainer'}>
         <input
+          type="email"
+          name="email"
           value={email}
           placeholder="Enter your email here"
           onChange={(ev) => setEmail(ev.target.value)}
@@ -99,6 +86,8 @@ const Login = (props: LoginProps) => {
       <br />
       <div className={'inputContainer'}>
         <input
+          type="password"
+          name="password"
           value={password}
           placeholder="Enter your password here"
           onChange={(ev) => setPassword(ev.target.value)}
@@ -108,7 +97,7 @@ const Login = (props: LoginProps) => {
       </div>
       <br />
       <div className={'inputContainer'}>
-        <input className={'inputButton'} type="button" onClick={onButtonClick} value={'Log in'} />
+        <LoginIcon />
       </div>
     </div>
   )

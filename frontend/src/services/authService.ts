@@ -2,23 +2,23 @@ import HttpClient from './HttpClient'
 import constant from './constant'
 
 const { auth } = constant
-const user = JSON.parse(localStorage.getItem('user') || '{}')
 
 export default {
 
     authLogin(payload: {username: string, password: string}) {
-        return HttpClient.post(`${auth}/login`, payload)
+        return HttpClient.requestWithNoToken.post(`${auth}/signin`, payload)
     },
 
-    authVerify() {
-        return HttpClient.get(`${auth}/verify`, {
-            headers: {
-                Authorization:`Bearer ${user.token}`,
-            }
-        })
+    authLogout() {
+        return HttpClient.requestWithToken.get(`${auth}/logout`)
     },
 
-    authCheckAccount(payload: {username: string}) {
-        return HttpClient.post(`${auth}/check-account`, payload)
+
+    authToken() {
+        return HttpClient.requestWithToken.get(`${auth}/token`)
+    },
+
+    authRefresh() {
+        return HttpClient.requestWithRefreshToken.get(`${auth}/refresh`)
     },
 }

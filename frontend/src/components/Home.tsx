@@ -1,41 +1,54 @@
 import { Dispatch, SetStateAction } from "react";
 import { useNavigate } from 'react-router-dom'
+import DashboardWrapper from './Dashboard';
+import services from '../services'
 
 interface HomeProps {
   email: string;
   loggedIn: boolean;
   setLoggedIn: Dispatch<SetStateAction<boolean>>;
+  setEmail: Dispatch<SetStateAction<string>>;
 }
 
-const Home = (props: HomeProps) => {
-  const { loggedIn, email } = props
+const Home = ({ loggedIn, setLoggedIn, setEmail }: HomeProps) => {
   const navigate = useNavigate()
+  const authService = services.auth
 
-  const onButtonClick = () => {
-    if (loggedIn) {
-      localStorage.removeItem('user')
-      props.setLoggedIn(false)
-    } else {
-      navigate('/login')
-    }
+  const onLogin = () => {
+    localStorage.removeItem('user')
+    setLoggedIn(false)
+    setEmail('')
+    navigate('/login')
+  }
+
+  const onLogout = async () => {
+    authService.authLogout()
+    localStorage.removeItem('user')
+    setLoggedIn(false)
+    setEmail('')
+    navigate('/')
   }
 
   return (
-    <div className="mainContainer">
-      <div className={'titleContainer'}>
-        <div>Welcome!</div>
+    <>
+    {loggedIn ? (
+      <DashboardWrapper onLogout={onLogout}/>
+    ) : (
+      <div className="mainContainer">
+        <div className={'titleContainer'}>
+          <div>Welcome!</div>
+        </div>
+        <div className={'buttonContainer'}>
+          <input
+            className={'inputButton'}
+            type="button"
+            onClick={onLogin}
+            value={'Log in'}
+          />
+        </div>
       </div>
-      <div>This is the home page.</div>
-      <div className={'buttonContainer'}>
-        <input
-          className={'inputButton'}
-          type="button"
-          onClick={onButtonClick}
-          value={loggedIn ? 'Log out' : 'Log in'}
-        />
-        {loggedIn ? <div>Your email address is {email}</div> : <div />}
-      </div>
-    </div>
+    )}
+    </>
   )
 }
 

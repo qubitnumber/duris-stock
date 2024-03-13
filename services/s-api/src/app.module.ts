@@ -1,3 +1,4 @@
+// https://github.com/elvisduru/token-auth-app/blob/master/src/auth/auth.controller.ts
 import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
@@ -7,10 +8,11 @@ import { UsersModule } from './users/users.module';
 import { AuthModule } from './auth/auth.module';
 import { ThrottlerModule } from '@nestjs/throttler';
 import { ApiModule } from './api/api.module';
+import { QuestradeModule } from './questrade/questrade.module';
 
 @Module({
   imports: [
-    ConfigModule.forRoot(),
+    ConfigModule.forRoot({ isGlobal: true }),
     MongooseModule.forRoot(process.env.DATABASE_URI),
     UsersModule,
     AuthModule,
@@ -21,6 +23,7 @@ import { ApiModule } from './api/api.module';
       },
     ]),
     ApiModule,
+    QuestradeModule,
   ],
   controllers: [AppController],
   providers: [AppService],

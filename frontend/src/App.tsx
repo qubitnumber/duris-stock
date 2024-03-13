@@ -8,7 +8,7 @@ import './App.css'
 function App() {
   const [loggedIn, setLoggedIn] = useState<boolean>(false)
   const [email, setEmail] = useState<string>('')
-  const authService = services.authService
+  const authService = services.auth
 
   useEffect(() => {
     // Fetch the user email and token from local storage
@@ -21,20 +21,26 @@ function App() {
     }
 
     // If the token exists, verify it with the auth server to see if it is valid
-    authService.authVerify()
-      .then((r) => r.data)
-      .then((r) => {
-        setLoggedIn('success' === r.message)
-        setEmail(user.email || '')
-      })
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+    if (loggedIn) {
+      authService.authToken()
+        .then((r) => r.data)
+        .then((r) => {
+          if (r.email) {
+            setLoggedIn(true)
+            setEmail(r.email)
+          } else {
+            setLoggedIn(false)
+            setEmail('')
+          }
+        })
+    }
+  }, [authService, loggedIn])
 
   return (
     <div className="App">
       <BrowserRouter>
         <Routes>
-          <Route path="/" element={<Home email={email} loggedIn={loggedIn} setLoggedIn={setLoggedIn} />} />
+          <Route path="/" element={<Home email={email} loggedIn={loggedIn} setLoggedIn={setLoggedIn} setEmail={setEmail}/>} />
           <Route path="/login" element={<Login setLoggedIn={setLoggedIn} setEmail={setEmail} />} />
         </Routes>
       </BrowserRouter>

@@ -1,13 +1,22 @@
-import os
+import httpx
 
-from fastapi import Depends, FastAPI, HTTPException, Request, status
+from fastapi import Depends, FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.security import HTTPBearer
 from dotenv import load_dotenv
+from contextlib import asynccontextmanager
+
+from .routers import finns, users, questrade
 
 load_dotenv()
 
-app = FastAPI()
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    app.requests_client = httpx.AsyncClient()
+    yield
+    await app.requests_client.aclose()
+
+app = FastAPI(lifespan=lifespan)
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["http://s-service:8001", "http://localhost:8001"],
@@ -16,14 +25,10 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-token_auth_scheme = HTTPBearer(auto_error=False)
-api_key = os.getenv('F_X_API_KEY')
+app.include_router(users.router)
+app.include_router(finns.router)
+app.include_router(questrade.router)
 
-@app.get("/protected")
-def private(request: Request, bearer_token: str = Depends(token_auth_scheme)):
-    if not bearer_token or bearer_token.credentials != api_key:
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="broken token",
-        )
-    return {"scheme": bearer_token.credentials, "api-key": api_key}
+@app.get("/")
+async def root():
+    return {"message": "Hello Bigger Applications!"}

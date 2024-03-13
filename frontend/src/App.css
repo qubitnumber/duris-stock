@@ -33,18 +33,31 @@
   justify-content: flex-start;
 }
 
+.header {
+  display: flex;
+  flex: 2;
+  justify-content: flex-start;
+  column-gap: 20px;
+  width: 100%;
+}
+
 .buttonContainer {
   display: flex;
   flex-direction: column;
-  align-items: center;
   justify-content: center;
-  height: 260px;
+}
+
+.rightHeader {
+  display: flex;
+  flex: 1;
+  justify-content: flex-end;
+  column-gap: 20px;
+  width: 100%;
 }
 
 .inputContainer {
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
   justify-content: center;
 }
 
