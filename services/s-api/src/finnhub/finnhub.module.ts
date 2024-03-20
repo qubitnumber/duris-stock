@@ -1,8 +1,8 @@
 import { Module } from '@nestjs/common';
 import { HttpModule } from '@nestjs/axios';
 import { JwtModule } from '@nestjs/jwt';
-import { QuestradeController } from './questrade.controller';
-import { QuestradeService } from './questrade.service';
+import { FinnhubController } from './finnhub.controller';
+import { FinnhubService } from './finnhub.service';
 
 @Module({
   imports: [
@@ -12,7 +12,7 @@ import { QuestradeService } from './questrade.service';
     }),
     HttpModule.registerAsync({
       useFactory: () => ({
-        timeout: 50000,
+        timeout: 120000,
         maxRedirects: 5,
         baseURL: process.env.F_SERVER_BASE_URL,
         withCredentials: true,
@@ -23,7 +23,7 @@ import { QuestradeService } from './questrade.service';
       }),
     }),
   ],
-  controllers: [QuestradeController],
-  providers: [QuestradeService],
+  controllers: [FinnhubController],
+  providers: [FinnhubService],
 })
-export class QuestradeModule {}
+export class FinnhubModule {}

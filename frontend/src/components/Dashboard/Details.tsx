@@ -1,7 +1,7 @@
 import { useContext } from "react";
 import Card from "./Card";
-import ThemeContext from "../context/ThemeContext";
-import { ThemeContextType, StockDetailsState } from '../types';
+import ThemeContext from "../../context/ThemeContext";
+import { ThemeContextType, StockDetailsState } from '../../types';
 
 interface DetailsProps  { 
   details: StockDetailsState

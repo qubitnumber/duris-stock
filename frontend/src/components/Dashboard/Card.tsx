@@ -1,6 +1,6 @@
 import { useContext, ReactNode } from "react";
-import ThemeContext from "../context/ThemeContext";
-import { ThemeContextType } from '../types';
+import ThemeContext from "../../context/ThemeContext";
+import { ThemeContextType } from '../../types';
 
 interface CardProps  { 
   children: ReactNode

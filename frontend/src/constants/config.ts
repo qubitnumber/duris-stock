@@ -1,6 +1,8 @@
 export const chartConfig = {
-  "1H": { interval: "OneMinute", hours: 1, days: 0, weeks: 0, months: 0, years: 0 },
-  "1D": { interval: "FiveMinutes", hours: 0, days: 1, weeks: 0, months: 0, years: 0 },
+  "1H": { interval: "FiveMinutes", hours: 1, days: 0, weeks: 0, months: 0, years: 0 },
+  "1D": { interval: "TenMinutes", hours: 0, days: 1, weeks: 0, months: 0, years: 0 },
+  "2D": { interval: "TenMinutes", hours: 0, days: 2, weeks: 0, months: 0, years: 0 },
+  "3D": { interval: "TenMinutes", hours: 0, days: 3, weeks: 0, months: 0, years: 0 },
   "1W": { interval: "OneDay", hours: 0, days: 0, weeks: 1, months: 0, years: 0 },
   "1M": { interval: "OneDay", hours: 0, days: 0, weeks: 0, months: 1, years: 0 },
   "3M": { interval: "OneDay", hours: 0, days: 0, weeks: 0, months: 3, years: 0 },

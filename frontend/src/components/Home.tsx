@@ -1,6 +1,6 @@
 import { Dispatch, SetStateAction } from "react";
 import { useNavigate } from 'react-router-dom'
-import DashboardWrapper from './Dashboard';
+import DashboardWrapper from './Dashboard/Dashboard';
 import services from '../services'
 
 interface HomeProps {

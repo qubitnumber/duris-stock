@@ -9,6 +9,7 @@ import { AuthModule } from './auth/auth.module';
 import { ThrottlerModule } from '@nestjs/throttler';
 import { ApiModule } from './api/api.module';
 import { QuestradeModule } from './questrade/questrade.module';
+import { FinnhubModule } from './finnhub/finnhub.module';
 
 @Module({
   imports: [
@@ -24,6 +25,7 @@ import { QuestradeModule } from './questrade/questrade.module';
     ]),
     ApiModule,
     QuestradeModule,
+    FinnhubModule,
   ],
   controllers: [AppController],
   providers: [AppService],

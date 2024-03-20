@@ -1,13 +1,16 @@
 import { useContext, useState } from "react";
 import { MagnifyingGlassIcon, XMarkIcon } from "@heroicons/react/24/solid";
-import ThemeContext from "../context/ThemeContext";
-import { ThemeContextType } from '../types';
-import services from '../services'
+import ThemeContext from "../../context/ThemeContext";
+import { ThemeContextType } from '../../types';
+import services from '../../services'
 import SearchResults from "./SearchResults";
+import { StockContextType } from "../../types";
+import StockContext from "../../context/StockContext";
 
 
 const Search = () => {
   const { darkMode } = useContext(ThemeContext) as ThemeContextType;
+  const { stock, setStock } = useContext(StockContext) as StockContextType;
 
   const [input, setInput] = useState("");
   const [bestMatches, setBestMatches] = useState([]);
@@ -29,6 +32,10 @@ const Search = () => {
   const clear = () => {
     setInput("");
     setBestMatches([]);
+    setStock({
+      ...stock,
+      symbol: '', symbolId: 0,
+    })
   };
 
   return (
@@ -44,7 +51,7 @@ const Search = () => {
           darkMode ? "bg-gray-900" : null
         }`}
         placeholder="Search stock..."
-        onChange={(event) => setInput(event.target.value)}
+        onChange={(event) => setInput(event.target.value.toUpperCase())}
         onKeyUp={(event) => {
           if (event.key === "Enter") {
             updateBestMatches();

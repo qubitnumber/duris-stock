@@ -1,3 +1,5 @@
+import Holidays from 'date-holidays'
+
 export const convertDateToUnixTimestamp = (date: Date) => {
   return Math.floor(date.getTime() / 1000);
 };
@@ -18,3 +20,13 @@ export const createDate = (date: string, days: number, weeks: number, months: nu
 export const createAgoHours = (hours: number, days: number, weeks: number, months: number, years: number) => {
   return hours + 24 * days + 24 * 7 * weeks + 24 * 31 * months + 24 * 365 * years;
 };
+
+export const getNextWorkDays = (date: Date) => {
+  const hd = new Holidays('US');
+  const day = date.getDay();
+  let isHoliday = false; 
+  if ([0, 6].includes(day) || hd.isHoliday(date)) {
+    isHoliday = true; 
+  }
+  return isHoliday;
+}

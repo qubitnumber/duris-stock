@@ -1,7 +1,7 @@
 import { useContext } from "react";
-import ThemeContext from "../context/ThemeContext";
+import ThemeContext from "../../context/ThemeContext";
 import { MoonIcon, UserCircleIcon } from "@heroicons/react/20/solid";
-import { ThemeContextType } from '../types';
+import { ThemeContextType } from '../../types';
 
 interface RightHeaderProps {
   onLogout: () => void;

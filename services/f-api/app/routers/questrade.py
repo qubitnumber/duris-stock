@@ -7,6 +7,7 @@ from datetime import datetime, timedelta
 
 from ..dependencies import get_bear_token
 from ..db.db import token_collection
+from ..services import detect_drop_price
 
 load_dotenv()
 
@@ -22,7 +23,7 @@ class BearerAuth(httpx.Auth):
       self.token = token
 
   def auth_flow(self, request):
-      request.headers['Authorization'] = f'Bearer {self.token}'
+      request.headers['Authorization'] = 'Bearer ' + self.token
       yield request
 
 async def get_db_refresh_token():
@@ -65,7 +66,7 @@ async def get_candles(symbol_identifier: int, startTime: datetime, endTime: date
   auth = BearerAuth(redeemed_token_dict['access_token'])
   params = { 'startTime': startTime, 'endTime': endTime, 'interval': interval}
   try:
-    url = f'{redeemed_token_dict['api_server']}v1/markets/candles/{symbol_identifier}'
+    url = redeemed_token_dict['api_server'] + 'v1/markets/candles/' + str(symbol_identifier)
     requests_client = request.app.requests_client
     symbolCandles = await requests_client.get(url, auth=auth, params=params)
     return symbolCandles.json()
@@ -94,7 +95,7 @@ async def get_symbols(symbol_identifier: int, request: Request):
   redeemed_token_dict = await redeem_token(request)
   auth = BearerAuth(redeemed_token_dict['access_token'])
   try:
-    url = f'{redeemed_token_dict['api_server']}v1/symbols/{symbol_identifier}'
+    url = redeemed_token_dict['api_server'] + 'v1/symbols/' + str(symbol_identifier)
     requests_client = request.app.requests_client
     symbolDetails = await requests_client.get(url, auth=auth)
     return symbolDetails.json()
@@ -108,7 +109,7 @@ async def get_quotes(symbol_identifier: int, request: Request):
   redeemed_token_dict = await redeem_token(request)
   auth = BearerAuth(redeemed_token_dict['access_token'])
   try:
-    url = f'{redeemed_token_dict['api_server']}v1/markets/quotes/{symbol_identifier}'
+    url = redeemed_token_dict['api_server'] + 'v1/markets/quotes/' + str(symbol_identifier)
     requests_client = request.app.requests_client
     symbolQuotes = await requests_client.get(url, auth=auth)
     return symbolQuotes.json()
@@ -122,7 +123,7 @@ async def get_time(request: Request):
   redeemed_token_dict = await redeem_token(request)
   auth = BearerAuth(redeemed_token_dict['access_token'])
   try:
-    url = f'{redeemed_token_dict['api_server']}v1/time'
+    url = redeemed_token_dict['api_server'] + 'v1/time'
     requests_client = request.app.requests_client
     time = await requests_client.get(url, auth=auth)
     return time.json()
@@ -144,5 +145,12 @@ async def get_symbol_candles_id(symbolId: int, ago: int, interval: str, request:
   server_time = await get_time(request)
   endTime = datetime.fromisoformat(server_time['time'])
   startTime = endTime - timedelta(hours = ago)
-  return await get_candles(symbolId, startTime, endTime, interval, request)
+  data = await get_candles(symbolId, startTime, endTime, interval, request)
+  drop_info = await detect_drop_price.model(data['candles'], interval)
+  data['drop_info'] = {
+    'avgPriceDrop':  drop_info['avg_price_drop'],
+    'threshold': drop_info['threshold'],
+    'biggestDrop': drop_info['biggest_drop']
+  }
+  return data
   

@@ -1,7 +1,7 @@
 import { useContext, Dispatch, SetStateAction } from "react";
-import StockContext from "../context/StockContext";
-import ThemeContext from "../context/ThemeContext";
-import {ThemeContextType, StockContextType } from '../types';
+import StockContext from "../../context/StockContext";
+import ThemeContext from "../../context/ThemeContext";
+import {ThemeContextType, StockContextType } from '../../types';
 
 interface Result { 
   symbol: string,

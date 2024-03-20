@@ -1,11 +1,11 @@
 import httpx
 
-from fastapi import Depends, FastAPI, Request
+from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from dotenv import load_dotenv
 from contextlib import asynccontextmanager
 
-from .routers import finns, users, questrade
+from .routers import finnhub, users, questrade
 
 load_dotenv()
 
@@ -26,7 +26,7 @@ app.add_middleware(
 )
 
 app.include_router(users.router)
-app.include_router(finns.router)
+app.include_router(finnhub.router)
 app.include_router(questrade.router)
 
 @app.get("/")
